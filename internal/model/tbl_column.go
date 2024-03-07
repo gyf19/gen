@@ -147,6 +147,9 @@ func (c *Column) defaultTagValue() string {
 	if !ok {
 		return ""
 	}
+	if strings.Contains(value, "`") {
+		return ""
+	}
 	if value != "" && strings.TrimSpace(value) == "" {
 		return "'" + value + "'"
 	}
