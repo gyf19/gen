@@ -133,8 +133,8 @@ func (field String) Upper() String {
 	return String{expr{e: clause.Expr{SQL: "UPPER(?)", Vars: []interface{}{field.RawExpr()}}}}
 }
 
-// Filed ...
-func (field String) Filed(values ...string) String {
+// Field ...
+func (field String) Field(values ...string) String {
 	return String{field.field(values)}
 }
 
@@ -143,6 +143,41 @@ func (field String) Filed(values ...string) String {
 func (field String) SubstringIndex(delim string, count int) String {
 	return String{expr{e: clause.Expr{
 		SQL:  fmt.Sprintf("SUBSTRING_INDEX(?,%q,%d)", delim, count),
+		Vars: []interface{}{field.RawExpr()},
+	}}}
+}
+
+// Substring https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_substring
+func (field String) Substring(params ...int) String {
+	if len(params) == 0 {
+		return field
+	}
+	if len(params) == 1 {
+		return String{expr{e: clause.Expr{
+			SQL:  fmt.Sprintf("SUBSTRING(?,%d)", params[0]),
+			Vars: []interface{}{field.RawExpr()},
+		}}}
+	}
+	return String{expr{e: clause.Expr{
+		SQL:  fmt.Sprintf("SUBSTRING(?,%d,%d)", params[0], params[1]),
+		Vars: []interface{}{field.RawExpr()},
+	}}}
+}
+
+// Substr SUBSTR is a synonym for SUBSTRING 
+// https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_substring
+func (field String) Substr(params ...int) String {
+	if len(params) == 0 {
+		return field
+	}
+	if len(params) == 1 {
+		return String{expr{e: clause.Expr{
+			SQL:  fmt.Sprintf("SUBSTR(?,%d)", params[0]),
+			Vars: []interface{}{field.RawExpr()},
+		}}}
+	}
+	return String{expr{e: clause.Expr{
+		SQL:  fmt.Sprintf("SUBSTR(?,%d,%d)", params[0], params[1]),
 		Vars: []interface{}{field.RawExpr()},
 	}}}
 }
@@ -263,8 +298,8 @@ func (field Bytes) Upper() String {
 	return String{expr{e: clause.Expr{SQL: "UPPER(?)", Vars: []interface{}{field.RawExpr()}}}}
 }
 
-// Filed ...
-func (field Bytes) Filed(values ...[]byte) Bytes {
+// Field ...
+func (field Bytes) Field(values ...[]byte) Bytes {
 	return Bytes{field.field(values)}
 }
 
